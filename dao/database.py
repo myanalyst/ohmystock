@@ -53,6 +53,10 @@ class DataBase():
         sql = "INSERT INTO CASHFLOW_SHEET VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
         return self.insert_many(sql, data)
 
+    def insert_eps(self, data):
+        sql = "INSERT INTO EPS VALUES(?,?,?)"
+        return self.insert_many(sql, data)
+
     def is_fiscal_date_ending_exist(self, ticker, fiscal_date_ending, table_name):
         cur = self.conn.cursor()
         sql = "SELECT COUNT(*) FROM '"+ table_name +"' WHERE TICKER='"+ ticker +"' AND FISCAL_DATE_ENDING='" + fiscal_date_ending +"'"

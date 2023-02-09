@@ -114,3 +114,51 @@ class Converter():
                 print('find %s, %s, %s, not to work on it.' %(ds['symbol'], report_type, d['fiscalDateEnding']))
 
         return data
+
+
+    def write_eps(self):
+        ds = self.report.read('/data/stock_old/', '{0}_eps_history.json'.format(self.ticker))
+        data = []
+        data = self.__set_eps_table_cols(ds)
+        print(data)
+        self.db.insert_eps(data)
+
+    def __set_eps_table_cols(self, ds):
+        data = []
+        for d in ds:
+            for k, v in d.items():
+                r =[self.ticker,k,round(float(v),2)]
+                
+                for i in range(len(r)):
+                    if r[i] == 'None':
+                        r[i] = 0
+
+                if not self.db.is_fiscal_date_ending_exist(self.ticker, k, 'EPS'):
+                    data.append(r)
+                else:
+                    print('find %s, %s, not to work on it.' %(self.ticker, k))
+
+        return data
+
+    def write_profile(self):
+        ds = self.report.read('/data/stock_old/', '{0}_profile.json'.format(self.ticker))
+        data = []
+        data = self.__set_profile_table_cols(ds)
+        print(data)
+        self.db.insert_profile(data)
+
+    def __set_profile_table_cols(self, ds):
+        data = []
+        for d in ds:
+            r =[self.ticker,]
+            
+            for i in range(len(r)):
+                if r[i] == 'None':
+                    r[i] = 0
+
+            if not self.db.is_fiscal_date_ending_exist(self.ticker, k, 'EPS'):
+                data.append(r)
+            else:
+                print('find %s, %s, not to work on it.' %(self.ticker, k))
+
+        return data
