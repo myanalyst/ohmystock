@@ -37,6 +37,10 @@ class DataBase():
         self.conn.commit()
         return cur.lastrowid
 
+    def insert_profile(self, data):
+        sql ='''INSERT INTO STOCK_PROFILE VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'''
+        return self.insert_many(sql, data)
+        
     def insert_stock_daily_prices(self, data):
         sql = ''' INSERT INTO STOCK_DAILY_PRICE VALUES(?,?,?,?,?,?,?) '''
         return self.insert_many(sql, data)
@@ -54,7 +58,7 @@ class DataBase():
         return self.insert_many(sql, data)
 
     def insert_eps(self, data):
-        sql = "INSERT INTO EPS VALUES(?,?,?)"
+        sql = ''' INSERT INTO EPS(TICKER,IS_ANNUAL,FISCAL_DATE_ENDING,ACTUAL_EPS,ESTIMATED_EPS) VALUES(?,?,?,?,?) '''
         return self.insert_many(sql, data)
 
     def is_fiscal_date_ending_exist(self, ticker, fiscal_date_ending, table_name):
@@ -65,19 +69,13 @@ class DataBase():
         # print(cur.fetchone()[0])
         return cur.fetchone()[0]
 
-def insert_eps(conn, stock_price):
-    """
-    insert a new stock_price into the STOCK_PRICE table
-    :param conn:
-    :param stock_price:
-    :return: stock_price id
-    """
-    sql = ''' INSERT INTO STOCK_PRICE(TICKER,TRADE_DATE,OPEN,HIGH,LOW,CLOSE,VOLUME)
-              VALUES(?,?,?,?,?,?,?) '''
-    cur = conn.cursor()
-    cur.execute(sql, stock_price)
-    conn.commit()
-    return cur.lastrowid
+    def is_exist(self, col_name, col_value, table_name):
+        cur = self.conn.cursor()
+        sql = "SELECT COUNT(*) FROM '"+ table_name +"' WHERE '"+ col_name +"'='"+ col_value +"'"
+        print(sql)
+        cur.execute(sql)
+        # print(cur.fetchone()[0])
+        return cur.fetchone()[0]
 
 
 if __name__ == '__main__':

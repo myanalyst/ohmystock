@@ -7,8 +7,40 @@ class Converter():
         self.report = Report()
         self.db = DataBase()
 
+    def write_profile(self):
+        d = self.report.read('/data/alphavantage/', '{0}_overview.json'.format(self.ticker))
+        data = []
+        print(d)
+        data = self.__set_profile_table_cols(d)
+        print(data)
+        self.db.insert_profile(data)
+
+    def __set_profile_table_cols(self, d):
+        data = []
+        r =[d['Symbol'],d['Name'],d['Description'],\
+        d['Sector'],d['Industry'],\
+        d['FiscalYearEnd'],\
+        d['LatestQuarter'],d['DividendPerShare'],\
+        d['ProfitMargin'],d['OperatingMarginTTM'],d['ReturnOnAssetsTTM'],\
+        d['ReturnOnEquityTTM'],d['AnalystTargetPrice'],d['TrailingPE'],\
+        d['ForwardPE'],d['Beta'],\
+        d['52WeekHigh'],d['52WeekLow'],\
+        d['SharesOutstanding'],\
+        d['DividendDate'],d['ExDividendDate']]
+                
+        for i in range(len(r)):
+            if r[i] == 'None':
+                r[i] = 0
+
+        if not self.db.is_exist('TICKER', d['Symbol'], 'STOCK_PROFILE'):
+            data.append(r)
+        else:
+            print('find %s, not to work on it.' %(d['symbol']))
+
+        return data
+
     def write_balance(self):
-        ds = self.report.read('/data/stock_old/', '{0}_balance_sheet.json'.format(self.ticker))
+        ds = self.report.read('/data/alphavantage/', '{0}_balance_sheet.json'.format(self.ticker))
         data = []
         data = self.__set_balance_table_cols(ds, 'annualReports') + self.__set_balance_table_cols(ds, 'quarterlyReports')
         print(data)
@@ -25,7 +57,7 @@ class Converter():
             r =[ds['symbol'],is_annual, d['fiscalDateEnding'],d['totalAssets'],d['totalCurrentAssets'],d['cashAndCashEquivalentsAtCarryingValue'],d['cashAndShortTermInvestments'],\
                 d['inventory'],d['currentNetReceivables'],d['totalNonCurrentAssets'],d['propertyPlantEquipment'],d['accumulatedDepreciationAmortizationPPE'],\
                 d['intangibleAssets'],d['intangibleAssetsExcludingGoodwill'],d['goodwill'],d['investments'],d['longTermInvestments'],\
-                d['shortTermInvestments'],d['otherCurrentAssets'],d['otherNonCurrrentAssets'],d['totalLiabilities'],d['totalCurrentLiabilities'],\
+                d['shortTermInvestments'],d['otherCurrentAssets'],d['otherNonCurrentAssets'],d['totalLiabilities'],d['totalCurrentLiabilities'],\
                 d['currentAccountsPayable'],d['deferredRevenue'],d['currentDebt'],d['shortTermDebt'],d['totalNonCurrentLiabilities'],\
                 d['capitalLeaseObligations'],d['longTermDebt'],d['currentLongTermDebt'],d['longTermDebtNoncurrent'],\
                 d['shortLongTermDebtTotal'],d['otherCurrentLiabilities'],d['otherNonCurrentLiabilities'],d['totalShareholderEquity'],\
@@ -43,7 +75,7 @@ class Converter():
         return data
 
     def write_income(self):
-        ds = self.report.read('/data/stock_old/', '{0}_income_statement.json'.format(self.ticker))
+        ds = self.report.read('/data/alphavantage/', '{0}_income_statement.json'.format(self.ticker))
         data = []
         data = self.__set_income_table_cols(ds, 'annualReports') + self.__set_income_table_cols(ds, 'quarterlyReports')
         # print(data)
@@ -75,7 +107,7 @@ class Converter():
         return data
 
     def write_cashflow(self):
-        ds = self.report.read('/data/stock_old/', '{0}_cash_flow.json'.format(self.ticker))
+        ds = self.report.read('/data/alphavantage/', '{0}_cash_flow.json'.format(self.ticker))
         data = []
         data = self.__set_cashflow_table_cols(ds, 'annualReports') + self.__set_cashflow_table_cols(ds, 'quarterlyReports')
         print(data)
@@ -115,50 +147,30 @@ class Converter():
 
         return data
 
-
+    
     def write_eps(self):
-        ds = self.report.read('/data/stock_old/', '{0}_eps_history.json'.format(self.ticker))
+        ds = self.report.read('/data/alphavantage/', '{0}_earnings.json'.format(self.ticker))
         data = []
-        data = self.__set_eps_table_cols(ds)
+        data = self.__set_eps_table_cols(ds, 'annualEarnings') + self.__set_eps_table_cols(ds, 'quarterlyEarnings')
         print(data)
         self.db.insert_eps(data)
 
-    def __set_eps_table_cols(self, ds):
+    def __set_eps_table_cols(self, ds, report_type):
         data = []
-        for d in ds:
-            for k, v in d.items():
-                r =[self.ticker,k,round(float(v),2)]
+        for d in ds[report_type]:
+            if report_type == 'annualEarnings':
+                r =[self.ticker,1, d['fiscalDateEnding'],d['reportedEPS'],'None']
+            else:
+                r =[self.ticker,0, d['fiscalDateEnding'],d['reportedEPS'],d['estimatedEPS']]
                 
-                for i in range(len(r)):
-                    if r[i] == 'None':
-                        r[i] = 0
-
-                if not self.db.is_fiscal_date_ending_exist(self.ticker, k, 'EPS'):
-                    data.append(r)
-                else:
-                    print('find %s, %s, not to work on it.' %(self.ticker, k))
-
-        return data
-
-    def write_profile(self):
-        ds = self.report.read('/data/stock_old/', '{0}_profile.json'.format(self.ticker))
-        data = []
-        data = self.__set_profile_table_cols(ds)
-        print(data)
-        self.db.insert_profile(data)
-
-    def __set_profile_table_cols(self, ds):
-        data = []
-        for d in ds:
-            r =[self.ticker,]
-            
             for i in range(len(r)):
                 if r[i] == 'None':
                     r[i] = 0
 
-            if not self.db.is_fiscal_date_ending_exist(self.ticker, k, 'EPS'):
+            if not self.db.is_fiscal_date_ending_exist(ds['symbol'], d['fiscalDateEnding'], 'EPS'):
                 data.append(r)
             else:
-                print('find %s, %s, not to work on it.' %(self.ticker, k))
+                print('find %s, %s, %s, not to work on it.' %(self.ticker, report_type, d['fiscalDateEnding']))
 
         return data
+
