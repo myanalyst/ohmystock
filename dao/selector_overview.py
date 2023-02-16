@@ -1,4 +1,4 @@
-from database import DataBase
+from dao.database import DataBase
 
 class Overview_Selector():
     def __init__(self):
@@ -10,6 +10,7 @@ class Overview_Selector():
 
 
 if __name__ == '__main__':
+    #when run from here, remember to replace dao.database with database
     s = Overview_Selector()
     data = s.select_daily_price('M', '2023-01-31', '2023-02-06')
     print(data)
