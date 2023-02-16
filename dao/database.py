@@ -9,8 +9,8 @@ class DataBase():
         self.conn = self._get_connection()
 
     def _get_connection(self):
-        root_path = os.getcwd() #path=/Users/neoo/ohmystock
-        db_file = root_path+"/data/db.sqlite3"
+        cur_username = os.path.expanduser('~')
+        db_file = cur_username+"/ohmystock/data/db.sqlite3"
         print(db_file)
         conn = None
         try:
@@ -19,8 +19,7 @@ class DataBase():
             print(e)
         return conn
 
-    def select(self, ticker, datef, datet):
-        sql = "SELECT * FROM STOCK_DAILY_PRICE WHERE TICKER='%s' AND TRADE_DATE >= '%s' AND TRADE_DATE <='%s'" %(ticker,datef, datet)
+    def select_daily_price(self, sql):        
         cur = self.conn.cursor()
         cur.execute(sql)
         return cur.fetchall()
