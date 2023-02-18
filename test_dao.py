@@ -24,6 +24,8 @@ from gui.profile import Profile
 #tested
 p = Profile()
 # print(p.get_ma_support('M', '2023-01-10', '2023-02-06', 5))
-# print(p.get_price('M',27.2,'2023-02-01',date.today()))
+# print(p.get_gap('M',27.2,'2023-02-01',date.today()))
+print(p.get_momentum_price('M', '2023-01-10', '2023-02-06', 5, 'ma5'))
+# print(p.get_key_finance('M'))
 
 
