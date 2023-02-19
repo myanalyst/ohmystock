@@ -6,15 +6,15 @@ from gui.profile import Profile
 
 #tested
 # d = Downloader()
-# d.download('cvs','OVERVIEW')
-# d.download('cvs','BALANCE_SHEET')
-# d.download('cvs','INCOME_STATEMENT')
-# d.download('cvs','CASH_FLOW')
-# d.download('cvs','EARNINGS')
-# d.download('cvs','TIME_SERIES_DAILY_ADJUSTED')
+# d.download('nvda','OVERVIEW')
+# d.download('nvda','BALANCE_SHEET')
+# d.download('nvda','INCOME_STATEMENT')
+# d.download('nvda','CASH_FLOW')
+# d.download('nvda','EARNINGS')
+# d.download('nvda','TIME_SERIES_DAILY_ADJUSTED')
 
 #tested
-# c = Converter('cvs')
+# c = Converter('nvda')
 # c.write_balance()
 # c.write_income()
 # c.write_cashflow()
@@ -22,10 +22,10 @@ from gui.profile import Profile
 # c.write_eps()
 
 #tested
-p = Profile()
+# p = Profile()
 # print(p.get_ma_support('M', '2023-01-10', '2023-02-06', 5))
 # print(p.get_gap('M',27.2,'2023-02-01',date.today()))
-print(p.get_momentum_price('M', '2023-01-10', '2023-02-06', 5, 'ma5'))
+# print(p.forcast_next_price('', '2023-01-10', '2023-02-06', 'ma5'))
 # print(p.get_key_finance('M'))
 
 

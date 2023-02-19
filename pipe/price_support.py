@@ -1,5 +1,7 @@
+import sys
+sys.path.insert(0,'/Users/ernestmoney/ohmystock')
 import numpy as np
-
+import pipe.common as cm
 '''
 this method is only for today, that's meaningful
 from today_price, back-checking day by day, list all the gap up/down in given data
@@ -20,6 +22,7 @@ def get_gap(today, data):
                     gap.append(('pressure', data[i+1][1], "%s%%" %(np.absolute(dis))))
                 else:
                     gap.append(('support', data[i+1][1], "%s%%" %(dis)))
+    print(gap)
     return gap
 
 '''
@@ -47,10 +50,7 @@ CVS's beta=0.65, so 1% is middle-high YPV
 
 def get_benchmark_prices(data, today, ma):
     r = []
-    index_today = 0
-    for i in range(0,len(data)):
-        if data[i][1] == today:
-            index_today = i
+    index_today = cm.get_today_index(data, today)
 
     for m in ma:
         r.append((data[index_today-(m-1)][1],data[index_today-(m-1)][5]))

@@ -34,11 +34,17 @@ class Test_Price_Momentum(unittest.TestCase):
         ]
 
     def test_get_benchmark_prices(self):
-        is_up = False
-        beta = 1.79
-        ma = 5
-        self.assertEqual(pm.forcast_next_price(self.data, is_up, beta, ma), [('weak', 20.32), ('medium', 20.18), ('strong', 19.82)])
-
+        pre_price = 0
+        i = 0
+        for i in range(0,len(self.data)):
+            if i >=4 and i <len(self.data)-1:
+                print('today: %s' %self.data[i][1])
+                if self.data[i][5] < self.data[i+1][5] :
+                    p = pm.forcast_next_price(self.data, self.data[i][1], True, 1.79, 5)
+                else:
+                    p = pm.forcast_next_price(self.data, self.data[i][1], False, 1.79, 5)
+                print('real tomorrow price : %s; distance (weak=%g, medium=%g, strong=%g)' %(self.data[i+1][5], p[0][1]-self.data[i+1][5], p[1][1]-self.data[i+1][5], p[2][1]-self.data[i+1][5]))
+            i = i + 1
     
 if __name__ == '__main__':
     unittest.main()

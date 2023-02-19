@@ -1,5 +1,6 @@
 import sys
 sys.path.insert(0,'/Users/ernestmoney/ohmystock')
+from datetime import date
 from tool.report import Report
 from dao.selector_overview import Overview_Selector
 import pipe.ma_support as masp
@@ -13,7 +14,7 @@ class Profile():
     
     #vols: the number of big vols that support might find at
     def get_ma_support(self, ticker, datef, datet, vols):
-        return masp.get_support(self.s.select_daily_price(ticker, datef, datet), vols)
+        return masp.get_support_by_big_vols(self.s.select_daily_price(ticker, datef, datet), vols)
 
     def get_basic_finance(self, ticker, datef, datet):
         pass
@@ -21,5 +22,10 @@ class Profile():
     def get_gap(self, ticker, today_price, datef, datet):
         return prs.get_gap(today_price, self.s.select_daily_price(ticker, datef, datet))
     
-    def get_next_momentum_price(self, ticker, datef, datet, momentum, ma):
-        return prs.get_next_momentum_price(self.s.select_daily_price(ticker, datef, datet), momentum, ma)
+    def forcast_next_price(self, ticker, datef, datet, ma):
+        s = self.s.select_stock_summary(ticker)
+        is_up = True
+        ma = 5
+        return prs.forcast_next_price(self.s.select_daily_price(ticker, datef, datet), date.today(), is_up, s['BETA'], ma)
+
+

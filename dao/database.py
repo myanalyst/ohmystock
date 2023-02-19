@@ -19,10 +19,11 @@ class DataBase():
             print(e)
         return conn
 
-    def select_daily_price(self, sql):        
+    def select(self, sql):        
         cur = self.conn.cursor()
         cur.execute(sql)
         return cur.fetchall()
+
 
     def insert_many(self, sql, data):
         """

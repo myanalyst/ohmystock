@@ -1,3 +1,7 @@
+import sys
+sys.path.insert(0,'/Users/ernestmoney/ohmystock')
+import pipe.common as cm
+
 '''
 module:
 list all the possible beta prices for tomorrow
@@ -24,10 +28,13 @@ beta_table = {
                 (1.81, 2.20) : (2.50, 4.20, 7.00)
              }
 #ma = 5 or 20 or 30 or 60
-def forcast_next_price(data, is_up, beta, ma):
+def forcast_next_price(data, today, is_up, beta, ma):
+    #get today index in data
+    today_index = cm.get_today_index(data, today)
     #average price by ma
     scp = 0
-    for i in range(0,ma):
+    for i in range(today_index - ma,ma):
+        print(data[i][5])
         scp = scp + data[i][5]
     avp = round(scp / ma, 2)
 
@@ -40,20 +47,18 @@ def forcast_next_price(data, is_up, beta, ma):
     
     prices = []
     if is_up :
-        prices.append(('weak'  ,round(data[-1][5] * (1 + m[0]*0.01),2)))
-        prices.append(('medium',round(data[-1][5] * (1 + m[1]*0.01),2)))
-        prices.append(('strong',round(data[-1][5] * (1 + m[2]*0.01),2)))
+        prices.append(('weak'  ,round(data[today_index][5] * (1 + m[0]*0.01),2)))
+        prices.append(('medium',round(data[today_index][5] * (1 + m[1]*0.01),2)))
+        prices.append(('strong',round(data[today_index][5] * (1 + m[2]*0.01),2)))
     else:
-        prices.append(('weak'  ,round(data[-1][5] * (1 - m[0]*0.01),2)))
-        prices.append(('medium',round(data[-1][5] * (1 - m[1]*0.01),2)))
-        prices.append(('strong',round(data[-1][5] * (1 - m[2]*0.01),2)))
+        prices.append(('weak'  ,round(data[today_index][5] * (1 - m[0]*0.01),2)))
+        prices.append(('medium',round(data[today_index][5] * (1 - m[1]*0.01),2)))
+        prices.append(('strong',round(data[today_index][5] * (1 - m[2]*0.01),2)))
 
-    print('Is UP.      : %s' %is_up)
-    print('Day 1 price : %s' %(data[0][5]))
-    print('Day 5 price : %s' %data[-1][5])
-    print('Day 5 MA    : %s' %avp)
-    print('momentum    : %s' %str(m))
-    print('tomorrow price: %s' %str(prices))
+    print('Given tomorrow UP? : %s' %is_up)
+    # print('Day 1 price : %s' %(data[today_index-4][5]))
+    print('Today price : %s' %data[today_index][5])
+    print('Forcast prices:%s' %prices)
     return prices
 
 if __name__ == '__main__':
@@ -65,8 +70,9 @@ if __name__ == '__main__':
     ('M', '2023-02-15', 24.3,  25.12, 24.27, 227.64, 9382400), 
     ('M', '2023-02-16', 24.14, 10.27, 23.72, 220.02, 4318037)
     ]
+    today = '2023-02-16'
     is_up = False
     beta = 1.79
     ma = 5
-    forcast_next_price(data, is_up, beta, ma)
+    forcast_next_price(data, today, is_up, beta, ma)
     #actual result for 02-17 is 213.88 (MA a little bit above )
