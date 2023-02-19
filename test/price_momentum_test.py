@@ -1,50 +1,67 @@
 import sys
 sys.path.insert(0,'/Users/ernestmoney/ohmystock')
+import numpy as np
 
-import pipe.price_momentum as pm
-
+import pipe.price_momentum as prm
+from dao.selector_overview import Overview_Selector
 
 import unittest
 
 class Test_Price_Momentum(unittest.TestCase):
     @classmethod
     def setUpClass(self):
-        self.data = [
-        ('M','2022-12-01',23.32, 23.5,  22.99, 23.18, 83967),
-        ('M','2022-12-02',23.18, 23.56, 22.99, 23.46, 69713),
-        ('M','2022-12-05',23.25, 23.3,  22.56, 22.69, 62059),
-        ('M','2022-12-06',22.65, 22.85, 22.01, 22.53, 84697),
-        ('M','2022-12-07',22.5,  23.17, 22.37, 22.96, 84886),
-        ('M','2022-12-08',23.1,  23.39, 22.82, 22.98, 66164),
-        ('M','2022-12-09',22.71, 22.84, 22.02, 22.07, 75907),
-        ('M','2022-12-12',22.01, 22.22, 21.64, 22.12, 70951),
-        ('M','2022-12-13',22.92, 23.09, 21.41, 21.49, 12301),
-        ('M','2022-12-14',21.32, 21.85, 21.2,  21.76, 93402),
-        ('M','2022-12-15',21.4,  21.41, 20.88, 21.0,  59924),
-        ('M','2022-12-16',20.36, 20.83, 20.21, 20.4,  103926),
-        ('M','2022-12-19',20.44, 20.57, 19.93, 20.12, 107435),
-        ('M','2022-12-20',20.0,  20.2,  19.86, 20.16, 68552),
-        ('M','2022-12-21',20.62, 20.89, 20.22, 20.42, 69753),
-        ('M','2022-12-22',20.04, 20.16, 19.4,  20.02, 72645),
-        ('M','2022-12-23',19.96, 20.42, 19.71, 20.3,  59765),
-        ('M','2022-12-27',20.56, 20.65, 20.15, 20.4,  74381),
-        ('M','2022-12-28',20.3,  20.42, 19.73, 20.05, 80315),
-        ('M','2022-12-29',20.19, 20.61, 20.17, 20.46, 87425),
-        ('M','2022-12-30',20.23, 20.86, 20.12, 20.65, 82595),
-        ]
+        self.s = Overview_Selector()
 
     def test_get_benchmark_prices(self):
-        pre_price = 0
+        ticker = 'nvda'
+        data = self.s.select_daily_price(ticker, '2022-02-01', '2023-02-17')
+
+        ws = 0
+        ms = 0
+        ss = 0
+        pws = 0
+        pms = 0
+        pss = 0
+        h1r = 0
+        h2r = 0
+        h3r = 0
+
         i = 0
-        for i in range(0,len(self.data)):
-            if i >=4 and i <len(self.data)-1:
-                print('today: %s' %self.data[i][1])
-                if self.data[i][5] < self.data[i+1][5] :
-                    p = pm.forcast_next_price(self.data, self.data[i][1], True, 1.79, 5)
+        for i in range(0,len(data)):
+            if i >=4 and i <len(data)-1:
+                print('\n')
+                if data[i][5] < data[i+1][5] :
+                    p = prm.forcast_next_price(data, ticker, data[i][1], True,  5)
                 else:
-                    p = pm.forcast_next_price(self.data, self.data[i][1], False, 1.79, 5)
-                print('real tomorrow price : %s; distance (weak=%g, medium=%g, strong=%g)' %(self.data[i+1][5], p[0][1]-self.data[i+1][5], p[1][1]-self.data[i+1][5], p[2][1]-self.data[i+1][5]))
+                    p = prm.forcast_next_price(data, ticker, data[i][1], False, 5)
+                eav = round((data[i+1][5] - data[i][5])/data[i][5] * 100,2)
+                
+                abs_eav = np.abs(eav)
+                if abs_eav <2.8:
+                    ws = ws + 1
+                    if (p[0][1]-data[i+1][5]) <=1.5:
+                        pws = pws + 1
+                    
+                if abs_eav <=3.8 and abs_eav>=2.8:
+                    ms = ms + 1
+                    if (p[1][1]-data[i+1][5]) <=1.5:
+                        pms = pms + 1
+                    
+                if abs_eav >3.8:
+                    ss = ss + 1
+                    if (p[2][1]-data[i+1][5]) <=1.5:
+                        pss = pss + 1
+                    
+
+
+                print('eav=%s, ws=%s, ms=%s, ss=%s' %(eav, ws, ms, ss))
+                print('Tomorrow : %s   |    Price : %s   |    EAV : %g%%   |    Distance (weak=%g, medium=%g, strong=%g)' %(data[i+1][1], data[i+1][5], eav, p[0][1]-data[i+1][5], p[1][1]-data[i+1][5], p[2][1]-data[i+1][5]))
+                # print('Tomorrow : %s   |    Price : %s   |    Distance (Hit1=%g, Hit2=%g, Hit3=%g)' %(data[i+1][1], data[i+1][5], p[0][1]-data[i+1][5], p[1][1]-data[i+1][5], p[2][1]-data[i+1][5]))
             i = i + 1
-    
+
+        h1r = (pws/ws) * 100
+        h2r = (pms/ms) * 100
+        h3r = (pss/ss) * 100
+        print('\n\nTotal tests: %s   |    Hit1 Rate: %g%%   |    Hit2 Rate: %g%%   |    Hit3 Rate: %g%%' %(i-5, h1r, h2r, h3r))
 if __name__ == '__main__':
     unittest.main()
