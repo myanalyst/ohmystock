@@ -25,7 +25,6 @@ class Profile():
     def forcast_next_price(self, ticker, datef, datet, ma):
         s = self.s.select_stock_summary(ticker)
         is_up = True
-        ma = 5
         return prs.forcast_next_price(self.s.select_daily_price(ticker, datef, datet), date.today(), is_up, s['BETA'], ma)
 
 

@@ -150,13 +150,19 @@ class Converter():
     def write_daily_price(self):
         ds = self.report.read('/data/alphavantage/', '{0}_time_series_daily_adjusted.json'.format(self.ticker))
         data = []
-        data = self.__set_daily_price_table_cols(ds)
-        print(data)
-        self.db.insert_daily_price(data)
-
-    def __set_daily_price_table_cols(self, ds):
-        data = []
-        for d in ds["Time Series (Daily)"]
+        keys = list(ds["Time Series (Daily)"].keys())
+        keys.reverse()
+        for d in keys:
+            r = (self.ticker, \
+            d,\
+            ds["Time Series (Daily)"][d]['1. open'],\
+            ds["Time Series (Daily)"][d]['2. high'],\
+            ds["Time Series (Daily)"][d]['3. low'],\
+            ds["Time Series (Daily)"][d]['4. close'],\
+            ds["Time Series (Daily)"][d]['6. volume'])
+            data.append(r)
+        # print(data)
+        self.db.insert_stock_daily_prices(data)
     
     def write_eps(self):
         ds = self.report.read('/data/alphavantage/', '{0}_earnings.json'.format(self.ticker))

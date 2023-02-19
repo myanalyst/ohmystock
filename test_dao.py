@@ -20,12 +20,13 @@ from gui.profile import Profile
 # c.write_cashflow()
 # c.write_profile()
 # c.write_eps()
+# c.write_daily_price()
 
 #tested
-# p = Profile()
+p = Profile()
 # print(p.get_ma_support('M', '2023-01-10', '2023-02-06', 5))
 # print(p.get_gap('M',27.2,'2023-02-01',date.today()))
-# print(p.forcast_next_price('', '2023-01-10', '2023-02-06', 'ma5'))
+# print(p.forcast_next_price('NVDA', '2023-01-10', '2023-02-17', 5))
 # print(p.get_key_finance('M'))
 
 
