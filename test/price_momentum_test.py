@@ -14,8 +14,8 @@ class Test_Price_Momentum(unittest.TestCase):
 
     def test_get_benchmark_prices(self):
         ticker = 'nvda'
-        data = self.s.select_daily_price(ticker, '2022-02-01', '2023-02-17')
-
+        data = self.s.select_daily_price(ticker, '2022-02-01', '2023-02-16')
+        print(data)
         ws = 0
         ms = 0
         ss = 0
@@ -31,9 +31,9 @@ class Test_Price_Momentum(unittest.TestCase):
             if i >=4 and i <len(data)-1:
                 print('\n')
                 if data[i][5] < data[i+1][5] :
-                    p = prm.forcast_next_price(data, ticker, data[i][1], True,  5)
+                    p = prm.forcast_next_price(data, data[i][1], True, 1.79, 5)
                 else:
-                    p = prm.forcast_next_price(data, ticker, data[i][1], False, 5)
+                    p = prm.forcast_next_price(data, data[i][1], False, 1.79, 5)
                 eav = round((data[i+1][5] - data[i][5])/data[i][5] * 100,2)
                 
                 abs_eav = np.abs(eav)

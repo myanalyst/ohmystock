@@ -9,7 +9,10 @@ import unittest
 class Test_Price_Support(unittest.TestCase):
     @classmethod
     def setUpClass(self):
-        self.data = [
+        pass
+
+    def test_get_benchmark_prices_M(self):
+        data = [
         ('M','2022-12-01',23.32, 23.5,  22.99, 23.18, 83967),
         ('M','2022-12-02',23.18, 23.56, 22.99, 23.46, 69713),
         ('M','2022-12-05',23.25, 23.3,  22.56, 22.69, 62059),
@@ -32,13 +35,11 @@ class Test_Price_Support(unittest.TestCase):
         ('M','2022-12-29',20.19, 20.61, 20.17, 20.46, 87425),
         ('M','2022-12-30',20.23, 20.86, 20.12, 20.65, 82595),
         ]
-
-    def test_get_benchmark_prices(self):
         today='2022-12-29'
         # print(ps.get_benchmark_prices(self.data, today, (5,))
         # print(ps.get_benchmark_prices(self.data, today, (10,))
-        self.assertEqual(ps.get_benchmark_prices(self.data, today, (5,)), [('2022-12-22', 20.02)])
-        self.assertEqual(ps.get_benchmark_prices(self.data, today, (10,)), [('2022-12-15', 21.0)])
+        self.assertEqual(ps.get_benchmark_prices(data, today, (5,)), [('2022-12-22', 20.02)])
+        self.assertEqual(ps.get_benchmark_prices(data, today, (10,)), [('2022-12-15', 21.0)])
 
     def test_get_gap(self):
         today = '2023-02-06'

@@ -31,7 +31,6 @@ beta_table = {
 def forcast_next_price(data, today, is_up, beta, ma):
     #get today index in data
     today_index = cm.get_today_index(data, today)
-    #average price by ma
     scp = 0
     for i in range(today_index - ma,ma):
         print(data[i][5])

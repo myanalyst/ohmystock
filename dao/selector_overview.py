@@ -13,6 +13,7 @@ class Overview_Selector():
     def select_stock_summary(self, ticker):
         sql = "SELECT TICKER,SECTOR,INDUSTRY,FISCAL_YEAR_END,LATEST_QUARTER,DIVIDEND_PERSHARE,PROFIT_MARGIN,OPERATING_MARGIN_TTM,RETURN_ON_ASSETS_TTM,RETURN_ON_EQUITY_TTM,ANALYST_TARGETPRICE,TRAILING_PE,FORWARD_PE,BETA,DIVIDEND_DATE FROM STOCK_PROFILE WHERE TICKER= '%s'" %(ticker)
         rs = self.db.select(sql)[0]
+        # print(rs)
         s = {}
         s['TICKER'] = rs[0]
         s['SECTOR'] = rs[1]

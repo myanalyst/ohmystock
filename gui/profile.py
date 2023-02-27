@@ -12,6 +12,9 @@ class Profile():
         self.r = Report()
         self.s = Overview_Selector()
     
+    def get_summary(self, ticker):
+        return self.s.select_stock_summary(ticker)
+        
     #vols: the number of big vols that support might find at
     def get_ma_support(self, ticker, datef, datet, vols):
         return masp.get_support_by_big_vols(self.s.select_daily_price(ticker, datef, datet), vols)
